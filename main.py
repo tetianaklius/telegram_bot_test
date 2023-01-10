@@ -4,8 +4,8 @@ import os
 
 app = Flask(__name__)
 # TOKEN = os.environ.get('TOKEN')
-# TOKEN = "5851946982:AAGHAux8lPfyD2ipKL4kT528-yQ2CPDcNPs"
-# bot = telebot.TeleBot(TOKEN)
+TOKEN = "5851946982:AAGHAux8lPfyD2ipKL4kT528-yQ2CPDcNPs"
+bot = telebot.TeleBot(TOKEN)
 
 
 @bot.message_handler(commands=["start"])
