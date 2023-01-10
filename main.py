@@ -1,16 +1,50 @@
-# This is a sample Python script.
+from flask import Flask, request
+import telebot
+import os
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+app = Flask(__name__)
+# TOKEN = os.environ.get('TOKEN')
+TOKEN = "5851946982:AAGHAux8lPfyD2ipKL4kT528-yQ2CPDcNPs"
+bot = telebot.TeleBot(TOKEN)
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+@bot.message_handler(commands=["start"])
+def message_start(message):
+    bot.send_message(message.chat.id, "Hello, user!")
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+@bot.message_handler(commands=["courses"])
+def message_courses(message):
+    keyboard = telebot.types.InlineKeyboardMarkup(row_width=1)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    with open('courses.txt') as file:
+        courses = [item.split(',') for item in file]
+
+        for title, link in courses:
+            url_button = telebot.types.InlineKeyboardButton(text=title.strip(), url=link.strip())
+            keyboard.add(url_button)
+
+        bot.send_message(message.chat.id, 'List of courses', reply_markup=keyboard)
+
+
+@bot.message_handler(func=lambda x: x.text.lower().startswith("python"))
+def message_text(message):
+    bot.send_message(message.chat.id, "Python")
+
+
+@app.route("/" + TOKEN, methods=["POST"])
+def get_message():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "Python Telegram Bot", 200
+
+
+@app.route("/")
+def main():
+    bot.remove_webhook()
+    bot.set_webhook(url="https://test-bot-2-0.herokuapp.com/" + TOKEN)
+    return "Python Telegram Bot", 200
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
