@@ -32,7 +32,7 @@ def message_text(message):
     bot.send_message(message.chat.id, "Python")
 
 
-bot.polling()
+bot.polling(none_stop=True)
 
 # @app.route("/" + TOKEN, methods=["POST"])
 # def get_message():
